@@ -5,16 +5,49 @@ from direction import Direction
 class Animal(Organism):
     def __init__(self, world, x, y):
         super().__init__(world, x, y)
+        self.is_animal = True
 
     def collision(self, collider):
+        human = self.world.get_human()
         if collider is None:
             self.world.board[self.position.x][self.position.y] = self
             return
-        if type(collider) == type(self):
+        elif type(collider) == type(self):
             self.go_back()
             self.world.board[self.position.x][self.position.y] = self
+            self.multiplication(collider)
+        elif collider == human and human.world.is_human_ability_active:
+            human.collision(self)
+            return
+        elif self.has_collision_power:
+            self.special_collision_method(collider)
+        elif collider.has_collision_power:
+            collider.special_collision_method(self)
         else:
             self.fight(collider)
+
+    def run_away(self):
+        empty_field = self.get_empty_field(self.position)
+        if empty_field.x < self.position.x:
+            self.position.x -= 1
+        elif empty_field.x > self.position.x:
+            self.position.x += 1
+        elif empty_field.y < self.position.y:
+            self.position.y -= 1
+        elif empty_field.y > self.position.y:
+            self.position.y += 1
+
+    def action(self):
+        super().action()
+        if self.has_action_power:
+            self.special_action_method()
+        else:
+            self.undo_position()
+            self.direction = self.get_random_direction()
+            self.make_move()
+
+    def get_collider(self):
+        return self.world.board[self.position.x][self.position.y]
 
     def go_back(self):
         if self.direction == Direction.UP:
@@ -27,21 +60,14 @@ class Animal(Organism):
             self.position.y -= 1
 
     def fight(self, collider):
-        if self.strength > collider.strength:
+        if self.strength >= collider.strength:
             self.kill(collider)
         elif self.strength < collider.strength:
-            print("test")
+            print(f'{collider.strength}')
             collider.kill(self)
 
     def get_to_string(self):
         pass
-
-    def kill(self, organism):
-        organism.is_dead = True
-        self.world.board[organism.position.x][organism.position.y] = self
-        self.world.organisms.remove(organism)
-        self.world.event_listener.add_comment(f"{self.get_to_string()} zabija {organism.get_to_string()} na pozycji({self.position.x}, {self.position.y})")
-
 
 
 

@@ -11,10 +11,6 @@ class Sheep(Animal):
         self.initiative = 4
         self.strength = 4
 
-    def __repr__(self):
-        return 'Sheep'
-
-
     def get_to_string(self):
         return "Owca"
 

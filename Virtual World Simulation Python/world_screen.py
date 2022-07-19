@@ -3,8 +3,16 @@ from world import World
 from grass import Grass
 from sheep import Sheep
 from wolf import Wolf
+from antelope import Antelope
 from guarana import Guarana
+from turtle import Turtle
+from dandelion import Dandelion
+from borscht import Borscht
+from fox import Fox
+from cyber_sheep import CyberSheep
 from wolf_berries import WolfBerries
+from dandelion import Dandelion
+from turtle import Turtle
 import pygame
 import sys
 from direction import Direction
@@ -18,7 +26,7 @@ class WorldScreen(World):
     BOARD_WIDTH, BOARD_HEIGHT = 500, 500
     DESCRIPTION_WIDTH, DESCRIPTION_HEIGHT = 720, 220
     EVENT_WIDTH, EVENT_HEIGHT = 220, 500
-    EMPTY_FIELD_COLOR = (255, 195, 112)
+    EMPTY_FIELD_COLOR = (255, 221, 169)
 
 
     def __init__(self, width, height, screen):
@@ -47,18 +55,18 @@ class WorldScreen(World):
 
     def draw_descriptions(self):
         organism_description = {
-            'Antylopa': Grass.COLOR,
-            'Cyber-owca': Grass.COLOR,
-            'Lis': Grass.COLOR,
+            'Antylopa': Antelope.COLOR,
+            'Cyber-owca': CyberSheep.COLOR,
+            'Lis': Fox.COLOR,
             'Owca': Sheep.COLOR,
             'Wilk': Wolf.COLOR,
-            'Zolw': Grass.COLOR,
-            'Barszcz': Grass.COLOR,
+            'Zolw': Turtle.COLOR,
+            'Barszcz': Borscht.COLOR,
             'Guarana': Guarana.COLOR,
-            'Mlecz': Grass.COLOR,
+            'Mlecz': Dandelion.COLOR,
             'Trawa': Grass.COLOR,
             'Wilcze jagody': WolfBerries.COLOR,
-            'Ziemia': (255, 195, 112),
+            'Ziemia': (255, 221, 169),
         }
 
         position_x, position_y = 5, 550
@@ -154,22 +162,25 @@ class WorldScreen(World):
                     elif event.key == pygame.K_p:
                         self.event_listener.show_previous_events()
                     elif event.key == pygame.K_SPACE:
-                        self.get_human().direction = None
+                        if self.is_human_alive:
+                            self.get_human().direction = None
                         self.evaluate()
-                    elif event.key == pygame.K_x:
-                        print("clicked")
-                        if self.get_human().cooldown == 0 and self.get_human().is_ability_active == False:
+                    elif event.key == pygame.K_x and self.get_human():
+                        if self.cooldown == 0 and self.is_human_ability_active == False:
                             self.event_listener.add_comment("Umiejetnosc aktywowana")
-                        elif self.get_human().is_ability_active == True:
+                            self.is_human_ability_active = True
+                        elif self.is_human_ability_active == True:
                             self.event_listener.add_comment("Umiejetnosc jest juz aktywna")
-                        else:
+                        elif self.cooldown != 0 and self.is_human_ability_active == False:
                             self.event_listener.add_comment("Nie mozna jeszcze aktywowac umiejetnosci")
-                    elif self.save_label.is_active:
+                    elif self.save_label and self.save_label.is_active:
                         if event.key == pygame.K_BACKSPACE:
                             self.save_label.user_text = self.save_label.user_text[:-1]
                         elif event.key == pygame.K_RETURN:
                             self.save_world(self.save_label.user_text)
                             print(f'Zatwierdzam i potwierdzam, zapisany plik to {self.save_label.user_text}')
+                            pygame.quit()
+                            sys.exit()
                         else:
                             self.save_label.user_text += event.unicode
 
@@ -188,5 +199,3 @@ class WorldScreen(World):
                 pass
             pygame.display.flip()
             clock.tick(60)
-
-            #TODO button wordlscreen menu organism human eventlistener

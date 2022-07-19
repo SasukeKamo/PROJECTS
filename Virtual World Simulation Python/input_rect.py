@@ -11,7 +11,7 @@ class InputRect:
         self.input_font = pygame.font.Font(None, font_size)
         self.input_rect = pygame.Rect(rect_size)
         self.user_text = default_text
-        self.is_active = False
+        self. is_active = False
         self.color = self.color_passive
 
     def draw(self, screen):

@@ -1,10 +1,6 @@
 from plant import Plant
 
 
-def get_to_string():
-    return "Wilcze jagody"
-
-
 class WolfBerries(Plant):
 
     COLOR = (255, 0, 191)
@@ -13,8 +9,12 @@ class WolfBerries(Plant):
         super().__init__(world, x, y)
         self.initiative = 0
         self.strength = 99
+        self.multiplication_chance = 5
+        self.has_collision_power = True
 
-    def collision(self, collider):
-        if collider.is_animal:
-            collider.is_dead = True
+    def special_collision_method(self, collider):
+        self.kill(collider)
+
+    def get_to_string(self):
+        return "Wilcze jagody"
 

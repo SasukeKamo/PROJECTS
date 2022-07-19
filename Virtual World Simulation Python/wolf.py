@@ -1,7 +1,5 @@
 from animal import Animal
 
-
-
 class Wolf(Animal):
 
     COLOR = (79, 79, 125)
@@ -11,7 +9,5 @@ class Wolf(Animal):
         self.initiative = 5
         self.strength = 9
 
-
     def get_to_string(self):
         return "Wilk"
-
